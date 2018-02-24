@@ -13,7 +13,7 @@ PCSeachG = ''
 MobileSearchG = ''
 ShutdownG = ''
 updateProgress = 0
-
+#test
 def primaryUpdate():
     try:
         account,password = getAccount() 
