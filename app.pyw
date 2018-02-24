@@ -13,6 +13,7 @@ PCSeachG = ''
 MobileSearchG = ''
 ShutdownG = ''
 updateProgress = 0
+
 def primaryUpdate():
     try:
         account,password = getAccount() 
@@ -53,20 +54,21 @@ def primaryUpdate():
 
 def getAccount():
     profile = []
-    with open("data\\gitAccount.dat", 'r') as pf:
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\gitAccount.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
     return profile[0],profile[1]
+
 def getCurrentVersion():
     currentVersion = 0
-    with open("data\\version.dat",'r') as curVer:
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\version.dat",'r') as curVer:
         for line in curVer:
             currentVersion = int(line.strip())
         curVer.close()
     return currentVersion
 
 def updateCurrentVersion(version):
-    with open("data\\version.dat",'w') as curVer:
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\version.dat",'w') as curVer:
         curVer.write(str(version))
         curVer.close()
 
@@ -74,25 +76,25 @@ def tracker():
     #tracker for log deletion every 30 days
     tracker = 0;
     clear = False
-    with open("data\\tracker.dat", 'r') as tr:
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'r') as tr:
         for line in tr:
             tracker= int(line.strip())
         tr.close()
     if (tracker == 60):
-        with open("data\\tracker.dat", 'w') as tr:
+        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'w') as tr:
             tr.write('0')
             print('Tracker is 60')
             print('Tracker has been reset.')
             clear = True
             tr.close()
     else:
-        with open("data\\tracker.dat", 'w') as tr:
+        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'w') as tr:
             tracker = tracker + 1
             tr.write(str(tracker))
             tr.close()
     #clear log  
     if(clear == True):
-        with open('data\\log.dat','w') as log:
+        with open('C:\\Users\\bing\\Desktop\\Bing2.0\\data\\log.dat','w') as log:
             print('Log is Cleared') 
             log.write('Log Cleared')
             log.write('\n')
@@ -102,7 +104,7 @@ def logging(info):
     #time for log
     localtime = time.asctime(time.localtime(time.time()))
     #print time stamp into log
-    with open("data\\log.dat", "a") as log:
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\log.dat", "a") as log:
         #log.write('==================================================')
         #log.write('\n')
         log.write(str(localtime)+ ': ' + str(info))
@@ -171,7 +173,7 @@ def updateProfile(profile):
         PCSeachG = PCSeach
         MobileSearchG = MobileSearch
         ShutdownG = Shutdown
-        with open("data\\profile.dat","w") as profile:
+        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\profile.dat","w") as profile:
             profile.write("Account = " + str(Account))
             profile.write('\n')
             profile.write("VM# = "+str(VM))
@@ -190,7 +192,9 @@ def updateProfile(profile):
         app.queueFunction(app.enableButton,"Begin Search")
         app.after(0,app.queueFunction,app.setLabel, "title", "Profile Updated Sucessfully! Click Begin Search to Continue!")
 def search():
-    from bingAuto import bingAuto
+    import sys
+    sys.path.append("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto")
+    import bingAuto
     app.queueFunction(app.removeEntry,"Account")
     app.queueFunction(app.removeEntry,"VM#")
     app.queueFunction(app.removeEntry,"Host")
@@ -210,10 +214,10 @@ def profile():
     profile = []
     newInfo = False
     try:
-        with open("data\\profile.dat", 'r') as pf:
+        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\profile.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
-        with open("data\\shutdown.dat", 'r') as pf:
+        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\shutdown.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
         app.queueFunction(app.setLabel, "title", "Getting Current User Profile...")
