@@ -30,8 +30,8 @@ def primaryUpdate():
         if(serverVersion != getCurrentVersion()):  
             #os.system('rmdir /S /Q "{}"'.format(directory))
             app.queueFunction(app.setLabel, "title", "An Update Is Available!")
-            os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing 2.0"))
-            os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\Desktop\\Bing 2.0\\bingAuto"))
+            os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
+            os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto"))
             os.system('git clone "{}"'.format("https://github.com/botonett/bingAuto"))
             updateCurrentVersion(serverVersion)
             updateProgress = updateProgress + 40
