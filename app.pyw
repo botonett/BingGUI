@@ -13,10 +13,10 @@ PCSeachG = ''
 MobileSearchG = ''
 ShutdownG = ''
 updateProgress = 0
-#test
+
 def primaryUpdate():
     try:
-        account,password = getAccount() 
+        account,password = getAccount()
         global updateProgress
         tracker()
         #create a Github instance:
@@ -26,6 +26,7 @@ def primaryUpdate():
         for repo in g.get_user().get_repos():
             if repo.name == "bingAuto":
                 serverVersion = repo.get_stats_contributors()[0].total
+                print(serverVersion)
                 updateProgress = updateProgress + 50
         if(serverVersion != getCurrentVersion()):  
             #os.system('rmdir /S /Q "{}"'.format(directory))
@@ -33,17 +34,21 @@ def primaryUpdate():
             os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
             os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto"))
             os.system('git clone "{}"'.format("https://github.com/botonett/bingAuto"))
+            #os.system('move "{}"'.format(" "))
+            shutil.move("C:\\Users\\bing\\Desktop\\Bing2.0\\BingGUI\\bingAuto", "C:\\Users\\bing\Desktop\\Bing2.0")
             updateCurrentVersion(serverVersion)
             updateProgress = updateProgress + 40
             logging("Update Sucessful")
             app.queueFunction(app.setLabel, "title", "Update Sucessful!")
             return "Update Sucessful"
         else:
+           
             updateProgress = updateProgress + 40
             logging("No Update Available")
             app.queueFunction(app.setLabel, "title", "No Update Is Available!")
             return "No Update Available"
-    except:
+    except Exception as e:
+        print("update failed"+ str(e))
         updateProgress = updateProgress + 40
         logging("An Error Has Occured While Attempting Update.")
         app.queueFunction(app.setLabel, "title", "An Error Has Occured While Attempting Update.")
@@ -116,7 +121,7 @@ def updateMeter():
     if(updateProgress < 100):
         app.setMeter("update", updateProgress)
 
-def checkProfileEntry(Shutdown):
+def checkProfileEntry():
     if(app.getEntry("Account") != ''):
         return True
     if(app.getEntry("Host") != ''):
@@ -129,9 +134,11 @@ def checkProfileEntry(Shutdown):
         return True
     if(app.getEntry("MobileSearch") != ''):
         return True
+    
+def checkShutdown(Shutdown):
     if(str(app.getCheckBox("Shutdown after complete")) != Shutdown):
         return True
-        
+
 def RepresentsInt(s):
     try: 
         int(s)
@@ -192,9 +199,6 @@ def updateProfile(profile):
         app.queueFunction(app.enableButton,"Begin Search")
         app.after(0,app.queueFunction,app.setLabel, "title", "Profile Updated Sucessfully! Click Begin Search to Continue!")
 def search():
-    import sys
-    sys.path.append("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto")
-    import bingAuto
     app.queueFunction(app.removeEntry,"Account")
     app.queueFunction(app.removeEntry,"VM#")
     app.queueFunction(app.removeEntry,"Host")
@@ -203,9 +207,32 @@ def search():
     app.queueFunction(app.removeEntry,"MobileSearch") 
     app.queueFunction(app.removeButton,"Update Profile")
     app.queueFunction(app.removeButton,"Begin Search")
-    app.queueFunction(app.setLabel, "title", "Search Process Is Starting...")       
-        
+    app.queueFunction(app.setLabel, "title", "Search Process Is Starting...")
+    import sys
+    sys.path.append("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto")
+    #from subprocess import call
+    #call(["python", "C:\\Users\\bing\\Desktop\\Bing2.0\\script.vbs"])
+
+    shutdown = str(app.getCheckBox("Shutdown after complete"))
+    app.queueFunction(app.disableCheckBox,"Shutdown after complete")
+    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\shutdown.dat", 'w') as pf:
+        pf.write(str(shutdown))
     
+    app.queueFunction(app.removeCheckBox,"Shutdown after complete")
+    if(shutdown == "True"):
+        app.after(12,app.queueFunction,app.setLabel, "title", "Your computer will shutdown automatically!")
+    else:
+        app.after(12,app.queueFunction,app.setLabel, "title", "Your computer will remain on after search is done!")
+    if(True):
+        time.sleep(2)
+        app.after(10,app.queueFunction,app.setLabel, "title", "Have a good day :) GUI out!")
+    
+    if(True):
+        time.sleep(2)
+        app.after(10,app.queueFunction,app.stop)
+    from subprocess import call
+    #call(["python", "C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto\\bingAuto.py"])
+    os.system("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto\\bingAuto.py")
 
 def profile():
     global updateProgress
@@ -239,6 +266,7 @@ def profile():
         PCSeach = profile[4]
         MobileSearch = profile[5]
         Shutdown = profile[6]
+        
     except Exception as e:
         print(e)
         logging(e)
@@ -295,7 +323,10 @@ def profile():
     app.addEntry("MobileSearch",6,0,2)
     app.setEntryDefault("MobileSearch",MobileSearch)
     app.setEntryTooltip("MobileSearch","Current Mobile Search per seassion")
-
+    app.addButton("Begin Search", search ,8,1,1)
+    app.hideButton("Begin Search")
+    app.addButton("Update Profile", updateProfile,8,0,1)
+    app.hideButton("Update Profile")
     app.addCheckBox("Shutdown after complete",7,1,1)
     if(Shutdown == "True"):
         app.queueFunction(app.setCheckBox,"Shutdown after complete")
@@ -306,29 +337,33 @@ def profile():
     while(counter >= 0):
         time.sleep(1)
         app.setLabel( "title", "Searching will begins in " + str(counter) + " seconds!")
-        if(checkProfileEntry(Shutdown) == True or newInfo == True):
+        if(checkProfileEntry() == True or newInfo == True):
             newInfo = True
             break
+        #Begin Search Process
+        if(counter == 0):
+             search()
         counter -= 1
-    #Begin Search Process
-    search()
+    
+   
     
     if(newInfo):
         #app.queueFunction(app.setLabel, "title", "Detected new lable!")
-        app.addButton("Update Profile", updateProfile,8,0,1)
-        app.addButton("Begin Search", search ,8,1,1)
+        app.showButton("Update Profile")
+        app.showButton("Begin Search")
         app.after(0,app.queueFunction,app.setLabel, "title", "Click update profile when complete! Or begin search to keep current profile.")
     
       
 
-def checkStop():
-    return app.yesNoBox("Confirm Exit", "Are you sure you want to exit the application?")
+#def checkStop():
+#    return app.yesNoBox("Confirm Exit", "Are you sure you want to exit the application?")
 
 
 if __name__ == "__main__":
+    
     # create a GUI variable called app
     app = gui("Bing Auto 2.0", "800x400")
-    app.setStopFunction(checkStop)
+    #app.setStopFunction(checkStop)
     app.setSticky("news")
     app.setExpand("both")
     app.addLabel("title", "Checking for update",0,0,2)
