@@ -31,7 +31,6 @@ def primaryUpdate():
             os.system("move.bat")
             updateCurrentVersion(serverVersion)
             time.sleep(1)
-            app.queueFunction(app.setLabel, "title", "Update updater Sucessful!")
             return "Update updater Sucessful"
         else:
             return "No updater update Available"
