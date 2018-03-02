@@ -33,12 +33,9 @@ def primaryUpdate():
                 serverVersion =temp[0].total
         if(serverVersion != getCurrentVersion()):  
             app.queueFunction(app.setLabel, "title", "Need to quit to update updater!")
-            os.system("update.bat")
-            if(True):
-                time.sleep(2)
-                app.after(0,app.queueFunction,app.stop)
-            sys.exit()
-            quit()
+            os.system("update.bat")  
+            app.stop()
+            exit(0)
             """
             #os.system('rmdir /S /Q "{}"'.format(directory))
             os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
