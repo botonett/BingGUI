@@ -15,47 +15,11 @@ ShutdownG = ''
 updateProgress = 0
 
 def primaryUpdate():
-    try:
-        account,password = getAccount()
-        global updateProgress
-        tracker()
-        #create a Github instance:
-        serverVersion = 0
-        g = Github(account, password)
-        updateProgress = updateProgress + 10
-        for repo in g.get_user().get_repos():
-            if repo.name == "bingAuto":
-                serverVersion = repo.get_stats_contributors()[0].total
-                print(serverVersion)
-                updateProgress = updateProgress + 50
-        if(serverVersion != getCurrentVersion()):  
-            #os.system('rmdir /S /Q "{}"'.format(directory))
-            app.queueFunction(app.setLabel, "title", "An Update Is Available!")
-            os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
-            os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto"))
-            os.system('git clone "{}"'.format("https://github.com/botonett/bingAuto"))
-            #os.system('move "{}"'.format(" "))
-            shutil.move("C:\\Users\\bing\\Desktop\\Bing2.0\\BingGUI\\bingAuto", "C:\\Users\\bing\Desktop\\Bing2.0")
-            updateCurrentVersion(serverVersion)
-            updateProgress = updateProgress + 40
-            logging("Update Sucessful")
-            app.queueFunction(app.setLabel, "title", "Update Sucessful!")
-            return "Update Sucessful"
-        else:
-           
-            updateProgress = updateProgress + 40
-            logging("No Update Available")
-            app.queueFunction(app.setLabel, "title", "No Update Is Available!")
-            return "No Update Available"
-    except Exception as e:
-        print("update failed"+ str(e))
-        updateProgress = updateProgress + 40
-        logging("An Error Has Occured While Attempting Update.")
-        app.queueFunction(app.setLabel, "title", "An Error Has Occured While Attempting Update.")
-        app.after(3,app.queueFunction,app.setLabel, "title", "Begining Search With Older Version!")
-        updateProgress = updateProgress + 50
-       
-        return "An Error Has Occured While Attempting Update."
+    global updateProgress
+    updateProgress = updateProgress + 100
+    app.queueFunction(app.setLabel, "title", "No Update Is Available!")
+    return "No Update Available"
+
 
 def getAccount():
     profile = []
