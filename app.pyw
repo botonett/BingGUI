@@ -1,6 +1,7 @@
 from github import Github
 from appJar import gui
 import os
+import sys
 import shutil
 import fileinput
 import time
@@ -31,6 +32,10 @@ def primaryUpdate():
                     temp =  repo.get_stats_contributors()
                 serverVersion =temp[0].total
         if(serverVersion != getCurrentVersion()):  
+            app.queueFunction(app.setLabel, "title", "Need to quit to update updater!")
+            os.system("update.bat")
+            sys.exit()
+            """
             #os.system('rmdir /S /Q "{}"'.format(directory))
             os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
             time.sleep(1)
@@ -41,9 +46,11 @@ def primaryUpdate():
             os.system("move.bat")
             updateCurrentVersion(serverVersion)
             time.sleep(1)
+            
             app.queueFunction(app.setLabel, "title", "Update updater Sucessful!")
             updateProgress = updateProgress + 30
             return "Update updater Sucessful"
+            """
         else:
             app.queueFunction(app.setLabel, "title", "No Update Is Available!")
             updateProgress = updateProgress + 30
