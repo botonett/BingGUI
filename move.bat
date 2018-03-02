@@ -1,0 +1,1 @@
+move C:\Users\bing\Desktop\Bing2.0\BingGUI\bingUpdate C:\Users\bing\Desktop\Bing2.0
