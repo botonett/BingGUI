@@ -32,7 +32,7 @@ def primaryUpdate():
                     temp =  repo.get_stats_contributors()
                 serverVersion =temp[0].total
         if(serverVersion != getCurrentVersion()):  
-            app.queueFunction(app.setLabel, "title", "Need to quit to update updater!")
+            app.queueFunction(app.setLabel, "title", "Updates Found. Installing Updates in the Background. BingGUI Will Restart Search Process Automatically!")
             os.system("update.bat")  
             app.stop()
             exit(0)
