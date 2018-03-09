@@ -6,8 +6,27 @@ import shutil
 import fileinput
 import time
 from shutil import copyfile
-from unipath import Path
 import sys
+import pip
+def update():
+    try:
+        with open("packages.txt",'r') as curVer:
+            for line in curVer:
+                pip.main(['install', line.strip()])
+            curVer.close()
+        return "Done"
+    except Exception as E:
+        print(str(E))
+        return "Failed!"
+updatePackage = update()
+while(True):
+    if((updatePackage == "Done") or (updatePackage == "Failed!")):
+        break
+    else:
+        time.sleep(1)
+print(updatePackage)
+from unipath import Path
+
 
 current_user = os.getlogin()
 current_working_dir, filename = os.path.split(os.path.abspath(__file__))
