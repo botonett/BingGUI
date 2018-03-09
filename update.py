@@ -5,7 +5,14 @@ import shutil
 import fileinput
 import time
 from shutil import copyfile
+from unipath import Path
+import sys
 
+current_user = os.getlogin()
+current_working_dir, filename = os.path.split(os.path.abspath(__file__))
+home = Path(current_working_dir).parent
+sys.path.append(home)
+os.chdir(current_working_dir)
 
 def primaryUpdate():
     try:
@@ -22,13 +29,13 @@ def primaryUpdate():
                 serverVersion =temp[0].total
         if(serverVersion != getCurrentVersion()):  
             #os.system('rmdir /S /Q "{}"'.format(directory))
-            os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
+            os.system('cd "{}"'.format(home))
             time.sleep(1)
-            os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0\\bingUpdate"))
+            os.system('rmdir /S /Q "{}"'.format(home + "\\bingUpdate"))
             time.sleep(1)
             os.system('git clone "{}"'.format("https://github.com/botonett/bingUpdate"))
             time.sleep(5)
-            os.system("move.bat")
+            os.system("move " + current_working_dir+"\\bingUpdate " + home)
             updateCurrentVersion(serverVersion)
             time.sleep(1)
             return "Update updater Sucessful"
@@ -40,21 +47,21 @@ def primaryUpdate():
 
 def getAccount():
     profile = []
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\gitAccount.dat", 'r') as pf:
+    with open(home+ "\\data\\gitAccount.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
     return profile[0],profile[1]
 
 def getCurrentVersion():
     currentVersion = 0
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\updaterVersion.dat",'r') as curVer:
+    with open(home+"\\data\\updaterVersion.dat",'r') as curVer:
         for line in curVer:
             currentVersion = int(line.strip())
         curVer.close()
     return currentVersion
 
 def updateCurrentVersion(version):
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\updaterVersion.dat",'w') as curVer:
+    with open(home+"\\data\\updaterVersion.dat",'w') as curVer:
         curVer.write(str(version))
         curVer.close()
 
@@ -68,5 +75,5 @@ if __name__ == "__main__":
     print(update)
     from subprocess import call
     #call(["CScript.exe", "C:\\Users\\bing\\Desktop\\Bing2.0\\script.vbs"])
-    os.system("C:\\Users\\bing\\Desktop\\Bing2.0\\bingUpdate\\run2.bat")
+    os.system(home+"\\bingUpdate\\run2.bat")
 

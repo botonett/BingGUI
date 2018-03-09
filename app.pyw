@@ -6,6 +6,14 @@ import shutil
 import fileinput
 import time
 from shutil import copyfile
+from unipath import Path
+import sys
+
+current_user = os.getlogin()
+current_working_dir, filename = os.path.split(os.path.abspath(__file__))
+home = Path(current_working_dir).parent
+sys.path.append(home)
+os.chdir(current_working_dir)
 AccountG = ''
 VMG = ''
 HostG = ''
@@ -33,7 +41,7 @@ def primaryUpdate():
                 serverVersion =temp[0].total
         if(serverVersion != getCurrentVersion()):  
             app.queueFunction(app.setLabel, "title", "Updates Found. Installing Updates in the Background. BingGUI Will Restart Search Process Automatically!")
-            os.system("update.bat")  
+            os.system("update.bat")
             app.stop()
             exit(0)
             """
@@ -64,21 +72,21 @@ def primaryUpdate():
 
 def getAccount():
     profile = []
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\gitAccount.dat", 'r') as pf:
+    with open(home+ "\\data\\gitAccount.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
     return profile[0],profile[1]
 
 def getCurrentVersion():
     currentVersion = 0
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\updaterVersion.dat",'r') as curVer:
+    with open(home+"\\data\\updaterVersion.dat",'r') as curVer:
         for line in curVer:
             currentVersion = int(line.strip())
         curVer.close()
     return currentVersion
 
 def updateCurrentVersion(version):
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\updaterVersion.dat",'w') as curVer:
+    with open(home+"\\data\\updaterVersion.dat",'w') as curVer:
         curVer.write(str(version))
         curVer.close()
 
@@ -86,25 +94,25 @@ def tracker():
     #tracker for log deletion every 30 days
     tracker = 0;
     clear = False
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'r') as tr:
+    with open(home+"\\data\\tracker.dat", 'r') as tr:
         for line in tr:
             tracker= int(line.strip())
         tr.close()
     if (tracker == 60):
-        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'w') as tr:
+        with open(home+"\\data\\tracker.dat", 'w') as tr:
             tr.write('0')
             print('Tracker is 60')
             print('Tracker has been reset.')
             clear = True
             tr.close()
     else:
-        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\tracker.dat", 'w') as tr:
+        with open(home+"\\data\\tracker.dat", 'w') as tr:
             tracker = tracker + 1
             tr.write(str(tracker))
             tr.close()
     #clear log  
     if(clear == True):
-        with open('C:\\Users\\bing\\Desktop\\Bing2.0\\data\\log.dat','w') as log:
+        with open(home+'\\data\\log.dat','w') as log:
             print('Log is Cleared') 
             log.write('Log Cleared')
             log.write('\n')
@@ -114,7 +122,7 @@ def logging(info):
     #time for log
     localtime = time.asctime(time.localtime(time.time()))
     #print time stamp into log
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\log.dat", "a") as log:
+    with open(home+"\\data\\log.dat", "a") as log:
         #log.write('==================================================')
         #log.write('\n')
         log.write(str(localtime)+ ': ' + str(info))
@@ -185,7 +193,7 @@ def updateProfile(profile):
         PCSeachG = PCSeach
         MobileSearchG = MobileSearch
         ShutdownG = Shutdown
-        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\profile.dat","w") as profile:
+        with open(home+"\\data\\profile.dat","w") as profile:
             profile.write("Account = " + str(Account))
             profile.write('\n')
             profile.write("VM# = "+str(VM))
@@ -214,13 +222,13 @@ def search():
     app.queueFunction(app.removeButton,"Begin Search")
     app.queueFunction(app.setLabel, "title", "Search Process Is Starting...")
     import sys
-    sys.path.append("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto")
+    sys.path.append(home+"\\bingAuto")
     #from subprocess import call
     #call(["python", "C:\\Users\\bing\\Desktop\\Bing2.0\\script.vbs"])
 
     shutdown = str(app.getCheckBox("Shutdown after complete"))
     app.queueFunction(app.disableCheckBox,"Shutdown after complete")
-    with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\shutdown.dat", 'w') as pf:
+    with open(home+"\\data\\shutdown.dat", 'w') as pf:
         pf.write(str(shutdown))
     
     app.queueFunction(app.removeCheckBox,"Shutdown after complete")
@@ -237,7 +245,7 @@ def search():
         app.after(10,app.queueFunction,app.stop)
     from subprocess import call
     #call(["python", "C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto\\bingAuto.py"])
-    os.system("C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto\\bingAuto.py")
+    os.system(home+"\\bingAuto\\bingAuto.py")
 
 def profile():
     global updateProgress
@@ -246,10 +254,10 @@ def profile():
     profile = []
     newInfo = False
     try:
-        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\profile.dat", 'r') as pf:
+        with open(home+"\\data\\profile.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
-        with open("C:\\Users\\bing\\Desktop\\Bing2.0\\data\\shutdown.dat", 'r') as pf:
+        with open(home+"\\data\\shutdown.dat", 'r') as pf:
             for line in pf:
                  profile.append(line.strip())
         app.queueFunction(app.setLabel, "title", "Getting Current User Profile...")
