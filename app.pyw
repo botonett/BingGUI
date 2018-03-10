@@ -8,6 +8,7 @@ import time
 from shutil import copyfile
 import sys
 import pip
+from random import randint
 def update():
     try:
         with open("packages.txt",'r') as curVer:
@@ -58,27 +59,9 @@ def primaryUpdate():
                     time.sleep(2)
                     temp =  repo.get_stats_contributors()
                 serverVersion =temp[0].total
-        if(serverVersion != getCurrentVersion()):  
-            app.queueFunction(app.setLabel, "title", "Updates Found. Installing Updates in the Background. BingGUI Will Restart Search Process Automatically!")
-            os.system("update.bat")
-            app.stop()
-            exit(0)
-            """
-            #os.system('rmdir /S /Q "{}"'.format(directory))
-            os.system('cd "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0"))
-            time.sleep(1)
-            os.system('rmdir /S /Q "{}"'.format("C:\\Users\\bing\\Desktop\\Bing2.0\\bingUpdate"))
-            time.sleep(1)
-            os.system('git clone "{}"'.format("https://github.com/botonett/bingUpdate"))
-            time.sleep(5)
-            os.system("move.bat")
-            updateCurrentVersion(serverVersion)
-            time.sleep(1)
-            
-            app.queueFunction(app.setLabel, "title", "Update updater Sucessful!")
-            updateProgress = updateProgress + 30
-            return "Update updater Sucessful"
-            """
+        if(serverVersion != getCurrentVersion()):    
+            app.thread(updateUpdater)
+            app.thread(didyouknow)
         else:
             app.queueFunction(app.setLabel, "title", "No Update Is Available!")
             updateProgress = updateProgress + 30
@@ -87,7 +70,22 @@ def primaryUpdate():
         app.queueFunction(app.setLabel, "title", "Failed to update updater!")
         updateProgress = updateProgress + 30
         return "An Error Has Occured While Attempting Update."
-
+def didyouknow():
+    data = []
+    with open("didyouknow.txt","r",encoding="utf-8") as dyn:
+        for line in dyn:
+            data.append(line.strip())
+    app.queueFunction(app.setLabel, "title", "Updates Found. Installing Updates in the Background. BingGUI Will Restart Search Process Automatically!")
+    time.sleep(6)
+    counter = 0
+    while(counter <= 20):
+        app.queueFunction(app.setLabel, "title", str(data[randint(0, len(data)-1)]))
+        time.sleep(6)
+    
+    
+def updateUpdater():
+    temp = os.system("update.bat")
+    app.stop()
 
 def getAccount():
     profile = []
@@ -179,6 +177,22 @@ def RepresentsInt(s):
         return False
 def updateProfile(profile):
     app.after(0,app.queueFunction,app.setLabel, "title", "Updating user profile!")
+    profile = []
+    
+    with open(home+"\\data\\profile.dat", 'r') as pf:
+        for line in pf:
+             profile.append(line.strip())
+    with open(home+"\\data\\shutdown.dat", 'r') as pf:
+        for line in pf:
+             profile.append(line.strip())
+        
+    Account1 = profile[0].split("=")[1].strip()
+    VM1 = profile[1].split("=")[1]
+    Host1 = profile[2].split("=")[1]
+    Report1 = profile[3].split("=")[1].strip()
+    PCSeach1 = int(profile[4].split("=")[1])
+    MobileSearch1 = int(profile[5].split("=")[1])
+    Shutdown1 = profile[6]
     Account = ''
     VM = ''
     Host = ''
@@ -193,15 +207,29 @@ def updateProfile(profile):
     PCSeach = app.getEntry("PCSeach")
     MobileSearch =  app.getEntry("MobileSearch")
     Shutdown = app.getCheckBox("Shutdown after complete")
-    if(Account == '' or Host == '' or Report == '' or PCSeach == '' or MobileSearch == ''):
-        app.after(0,app.queueFunction,app.setLabel, "title", "All fields need to be filled completely before profile can be updated")
-    elif(RepresentsInt(PCSeach) == False):
+    if(Account == '' or Host == '' or Report == '' or PCSeach == '' or MobileSearch == '' or VM == ''):
+        app.after(0,app.queueFunction,app.setLabel, "title", "Updating fields with inputs!")
+        if(Account == ''):
+            Account = Account1
+        if(Host == ''):
+            Host = Host1
+        if(Report == ''):
+            Report = Report1
+        if(PCSeach == ''):
+            PCSeach = PCSeach1
+        if(MobileSearch == ''):
+            MobileSearch = MobileSearch1
+        if(VM == ''):
+            VM = VM1
+    if(RepresentsInt(PCSeach) == False):
         app.after(0,app.queueFunction,app.setLabel, "title", "PC Search must be an integer ie. 32")
     elif(RepresentsInt(MobileSearch) == False):
         app.after(0,app.queueFunction,app.setLabel, "title", "Mobile Search must be an integer ie. 23")
     elif('@' not in Report or ' ' in Report):
+        print(Report)
         app.after(0,app.queueFunction,app.setLabel, "title", "Report destination must be a valid email address.")
     elif('@' not in Account or ' ' in Account):
+        print(Account)
         app.after(0,app.queueFunction,app.setLabel, "title", "Bing account must be a valid email address.")
     else:
         app.queueFunction(app.disableButton,"Begin Search")
@@ -230,16 +258,20 @@ def updateProfile(profile):
         profile.close()
         app.queueFunction(app.enableButton,"Begin Search")
         app.after(0,app.queueFunction,app.setLabel, "title", "Profile Updated Sucessfully! Click Begin Search to Continue!")
-def search():
+def clear():
     app.queueFunction(app.removeEntry,"Account")
     app.queueFunction(app.removeEntry,"VM#")
     app.queueFunction(app.removeEntry,"Host")
     app.queueFunction(app.removeEntry,"Report")
     app.queueFunction(app.removeEntry,"PCSeach")
-    app.queueFunction(app.removeEntry,"MobileSearch") 
+    app.queueFunction(app.removeEntry,"MobileSearch")
     app.queueFunction(app.removeButton,"Update Profile")
     app.queueFunction(app.removeButton,"Begin Search")
     app.queueFunction(app.setLabel, "title", "Search Process Is Starting...")
+def search():
+    app.thread(clear)
+    app.thread(search2)
+def search2():
     import sys
     sys.path.append(home+"\\bingAuto")
     #from subprocess import call
@@ -266,6 +298,7 @@ def search():
     #call(["python", "C:\\Users\\bing\\Desktop\\Bing2.0\\bingAuto\\bingAuto.py"])
     os.system(home+"\\bingAuto\\bingAuto.py")
 
+    
 def profile():
     global updateProgress
     while(updateProgress != 100):
@@ -376,8 +409,6 @@ def profile():
         if(counter == 0):
              search()
         counter -= 1
-    
-   
     
     if(newInfo):
         #app.queueFunction(app.setLabel, "title", "Detected new lable!")
