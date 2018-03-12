@@ -1,5 +1,3 @@
-from github import Github
-from appJar import gui
 import os
 import sys
 import shutil
@@ -27,7 +25,8 @@ while(True):
         time.sleep(1)
 print(updatePackage)
 from unipath import Path
-
+from github import Github
+from appJar import gui
 
 current_user = os.getlogin()
 current_working_dir, filename = os.path.split(os.path.abspath(__file__))
