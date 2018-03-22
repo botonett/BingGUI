@@ -63,11 +63,11 @@ def primaryUpdate():
             app.thread(didyouknow)
         else:
             app.queueFunction(app.setLabel, "title", "No Update Is Available!")
-            updateProgress = updateProgress + 30
+            updateProgress = 100
             return "No updater update Available"
     except Exception as e:
         app.queueFunction(app.setLabel, "title", "Failed to update updater!")
-        updateProgress = updateProgress + 30
+        updateProgress = 100
         return "An Error Has Occured While Attempting Update."
 def didyouknow():
     data = []
